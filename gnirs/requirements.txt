@@ -1,0 +1,5 @@
+# Required Packages for gnirs
+astropy>=5.0
+matplotlib>=3.5
+numpy>=1.19
+re>=2.2
