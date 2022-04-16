@@ -9,6 +9,8 @@ class GnirsFits:
         self._hdul = None
         self._data_type = None
         self._pixel_scale = None
+        self._filter_one = None
+        self._filter_two = None
 
     @property
     def fits_file(self):
@@ -38,6 +40,7 @@ class GnirsFits:
 
     # ToDo Add the option to read it from the header and, if set by the user, to check in the header if this
     #      is consistent.
+    # ToDo In case units are not present, it should be added with a warning.
     @pixel_scale.setter
     def pixel_scale(self, pixel_scale):
         self._pixel_scale = pixel_scale
@@ -50,6 +53,21 @@ class GnirsFits:
     def primary_header(self, primary_header):
         self._hdul[0].header = primary_header
 
+    @property
+    def filter_one(self):
+        return self._filter_one
+
+    @filter_one.setter
+    def filter_one(self, filter_one):
+        self._filter_one = filter_one
+
+    @property
+    def filter_two(self):
+        return self._filter_two
+
+    @filter_two.setter
+    def filter_two(self, filter_two):
+        self._filter_two = filter_two
 
 
 
