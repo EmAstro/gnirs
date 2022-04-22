@@ -25,8 +25,6 @@ from gnirs.utils import types
 CENTROID_FUNCTIONS = [None, 'com', 'quadratic', '1dg', '2dg']
 
 
-
-
 def _make_annular_aperture(location, radius_in, radius_out):
     """Given a starting point and two radii returns a annular aperture object
 
@@ -63,6 +61,15 @@ def _get_preferred_location(initial_location, refined_location):
         return initial_location
 
 def _distance_in_pixels(location_1, location_2):
+    """Calculate the distance between two locations on the CCD
+
+    Args:
+        location_1 (tuple): first location
+        location_2 (tuple): second location
+
+    Returns:
+        float: distance between the two locations in pixels
+    """
     distance_in_pixels = ((location_1[0]-location_2[0])**2. + (location_1[1]-location_2[1])**2.)**0.5
     return distance_in_pixels
 
@@ -94,6 +101,8 @@ class CircularAperturePhotometry:
 
     """
 
+    # ToDo: the use of inverse variance is not implemented yet
+
     def __init__(self, data, initial_location, radius, radius_bkg_in=None, radius_bkg_out=None, inverse_variance=None,
                  centroid_function=None):
         self.data = data
@@ -104,46 +113,44 @@ class CircularAperturePhotometry:
         self.radius_bkg_in = radius_bkg_in
         self.radius_bkg_out = radius_bkg_out
         self.aperture_bkg = None
-
         self.centroid_function = centroid_function
-
         self.background = None
         self.inverse_variance = inverse_variance
 
     @property
     def data(self):
-        return self.__data
+        return self._data
 
     @data.setter
     def data(self, data):
-        self.__data = data
+        self._data = data
 
     @property
     def initial_location(self):
-        return self.__initial_location
+        return self._initial_location
 
     @initial_location.setter
     def initial_location(self, initial_location):
         if type(initial_location) is tuple:
-            self.__initial_location = types.int_to_float(initial_location[0]), types.int_to_float(initial_location[1])
+            self._initial_location = types.int_to_float(initial_location[0]), types.int_to_float(initial_location[1])
         else:
             raise TypeError(r"initial_location needs to be of type tuple")
 
     @property
     def radius(self):
-        return self.__radius
+        return self._radius
 
     @radius.setter
     def radius(self, radius):
-        self.__radius = types.int_to_float(radius)
+        self._radius = types.int_to_float(radius)
 
     @property
     def radius_bkg_in(self):
-        return self.__radius_bkg_in
+        return self._radius_bkg_in
 
     @radius_bkg_in.setter
     def radius_bkg_in(self, radius_bkg_in):
-        self.__radius_bkg_in = types.int_to_float(radius_bkg_in)
+        self._radius_bkg_in = types.int_to_float(radius_bkg_in)
         try:
             self.aperture_bkg = _make_annular_aperture(_get_preferred_location(self.initial_location,
                                                                                self.refined_location),
@@ -154,11 +161,11 @@ class CircularAperturePhotometry:
 
     @property
     def radius_bkg_out(self):
-        return self.__radius_bkg_out
+        return self._radius_bkg_out
 
     @radius_bkg_out.setter
     def radius_bkg_out(self, radius_bkg_out):
-        self.__radius_bkg_out = types.int_to_float(radius_bkg_out)
+        self._radius_bkg_out = types.int_to_float(radius_bkg_out)
         try:
             self.aperture_bkg = _make_annular_aperture(_get_preferred_location(self.initial_location,
                                                                                self.refined_location),
@@ -168,34 +175,34 @@ class CircularAperturePhotometry:
 
     @property
     def refined_location(self):
-        return self.__refined_location
+        return self._refined_location
 
     @refined_location.setter
     def refined_location(self, refined_location):
         if refined_location is None:
-            self.__refined_location = None
+            self._refined_location = None
         elif type(refined_location) is tuple:
-            self.__refined_location = types.int_to_float(refined_location[0]), types.int_to_float(refined_location[1])
+            self._refined_location = types.int_to_float(refined_location[0]), types.int_to_float(refined_location[1])
         else:
             raise TypeError(r"refined_location needs to be of type tuple")
 
     @property
     def centroid_function(self):
-        return self.__centroid_fuction
+        return self._centroid_fuction
 
     @centroid_function.setter
     def centroid_function(self, centroid_function):
         if centroid_function is None:
-            self.__centroid_function = None
+            self._centroid_function = None
             self.refined_location = None
         elif centroid_function == 'com':
-            self.__centroid_function = centroid_com
+            self._centroid_function = centroid_com
         elif centroid_function == 'quadratic':
-            self.__centroid_function = centroid_quadratic
+            self._centroid_function = centroid_quadratic
         elif centroid_function == '1dg':
-            self.__centroid_function = centroid_1dg
+            self._centroid_function = centroid_1dg
         elif centroid_function == '2dg':
-            self.__centroid_function = centroid_2dg
+            self._centroid_function = centroid_2dg
         else:
             raise ValueError(r'Centroid function not supported. Possibilities are: \n'
                              r'{}'.format(CENTROID_FUNCTIONS))
@@ -216,7 +223,7 @@ class CircularAperturePhotometry:
                 self.refined_location = centroid_sources(data_bkg_subtracted,
                                                          x_centroid, y_centroid ,
                                                          box_size=int(2.*self.radius),
-                                                         centroid_func=self.__centroid_function)
+                                                         centroid_func=self._centroid_function)
                 # Update background aperture to new centroid
                 self.aperture_bkg = _make_annular_aperture(_get_preferred_location(self.initial_location,
                                                                                    self.refined_location),
