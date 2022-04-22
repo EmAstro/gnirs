@@ -3,7 +3,7 @@
 Code to (efficiently?) work on GEMINI/GNIRS data
 
 # Requirements
-See [requirements.txt](https://github.com/EmAstro/ESOAsg/blob/main/gnirs/requirements.txt)
+See [requirements.txt](https://github.com/EmAstro/gnirs/blob/main/gnirs/requirements.txt)
 
 # Documentation
 [![Documentation Status](https://readthedocs.org/projects/gnirs/badge/?version=latest)](https://gnirs.readthedocs.io/en/latest/?badge=latest)
