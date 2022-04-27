@@ -27,7 +27,7 @@ Photometry
    :maxdepth: 2
    :caption: Contents:
 
-
+   api
 
 Indices and tables
 ==================
